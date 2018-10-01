@@ -76,7 +76,7 @@ Vagrant.configure("2") do |config|
   config.vm.define "server" do |server|
      #server.vm.box = "rhce-server"
      server.vm.provision :shell, inline: <<-SHELL
-	hostnamectl set-hostname rhce-server.jhveras.org
+	hostnamectl set-hostname vagrant-server.jhveras.org
         nmcli con delete enp0s8
         nmcli con add type ethernet ifname enp0s8 con-name enp0s8 
         nmcli con mod enp0s8 ipv4.addresses 192.168.99.20/24 ipv4.gateway 192.168.99.1 ipv4.dns 192.168.99.1 ipv4.dns-search jhveras.org ipv4.method manual connection.autoconnect yes
@@ -85,10 +85,10 @@ Vagrant.configure("2") do |config|
      SHELL
   end
 
-  config.vm.define "client" do |client|
+  config.vm.define "client01" do |client|
      #client.vm.box = "rhce-client01"
      client.vm.provision :shell, inline: <<-SHELL
-        hostnamectl set-hostname rhce-client01.jhveras.org
+        hostnamectl set-hostname vagrant-client01.jhveras.org
         nmcli con mod enp0s3 ipv4.ignore-auto-dns yes
         nmcli con del enp0s8
 	nmcli con add type ethernet ifname enp0s8 con-name enp0s8 autoconnect yes
@@ -96,4 +96,17 @@ Vagrant.configure("2") do |config|
         nmcli con up enp0s8	
      SHELL
   end
+
+  config.vm.define "client02" do |client|
+     #client.vm.box = "rhce-client01"
+     client.vm.provision :shell, inline: <<-SHELL
+        hostnamectl set-hostname vagrant-client02.jhveras.org
+        nmcli con mod enp0s3 ipv4.ignore-auto-dns yes
+        nmcli con del enp0s8
+        nmcli con add type ethernet ifname enp0s8 con-name enp0s8 autoconnect yes
+        nmcli con mod enp0s8 ipv4.addresses 192.168.99.45/24 ipv4.gateway 192.168.99.1 ipv4.dns 192.168.99.1 ipv4.dns-search jhveras.org ipv4.method manual
+        nmcli con up enp0s8
+     SHELL
+  end
+
 end
